@@ -1,0 +1,16 @@
+# Secrets — ye kabhi GitHub par upload nahi hone chahiye
+bot_config.txt
+
+# Python junk
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Local data / reports
+data/
+output*/
+
+# Local HTML reports ignore, lekin dashboard jaan-boojh kar track hota hai
+*.html
+!docs/index.html
