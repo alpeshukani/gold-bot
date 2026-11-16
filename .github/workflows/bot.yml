@@ -1,0 +1,84 @@
+name: TrendPulse GOLD Bot
+
+# Har ghante, ghante ke 5th minute par chalta hai (4H candle close ke baad).
+on:
+  schedule:
+    - cron: "5 * * * *"
+  workflow_dispatch: {}     # "Run workflow" button se manual test
+
+# Do runs ek saath na chalein (state file conflict se bachne ke liye)
+concurrency:
+  group: trendpulse-bot
+  cancel-in-progress: false
+
+jobs:
+  run-bot:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: write      # state file commit karne ke liye
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: python -m pip install --quiet --disable-pip-version-check -r requirements.txt
+
+      # Secrets set hain ya nahi — sirf SET/MISSING print karta hai (value nahi)
+      - name: Check secrets
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: |
+          [ -n "$TELEGRAM_BOT_TOKEN" ] && echo "TELEGRAM_BOT_TOKEN: SET" || echo "TELEGRAM_BOT_TOKEN: MISSING"
+          [ -n "$TELEGRAM_CHAT_ID" ] && echo "TELEGRAM_CHAT_ID: SET" || echo "TELEGRAM_CHAT_ID: MISSING"
+
+      # Sirf manual run par: turant test message bhejo
+      - name: Telegram test (manual run only)
+        if: github.event_name == 'workflow_dispatch'
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: python algo_bot.py --test-telegram
+
+      # Normal run: signal check + din mein ek baar status (heartbeat) message
+      - name: Run bot (paper mode)
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          DELTA_API_KEY: ${{ secrets.DELTA_API_KEY }}
+          DELTA_API_SECRET: ${{ secrets.DELTA_API_SECRET }}
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            python algo_bot.py --once --heartbeat --notify
+          else
+            python algo_bot.py --once --heartbeat
+          fi
+
+      - name: Save bot state
+        run: |
+          git config user.name "trendpulse-bot"
+          git config user.email "bot@users.noreply.github.com"
+          git add -A          # state + trades (secrets .gitignore se already bahar hain)
+          if git diff --cached --quiet; then
+            echo "State unchanged — kuch commit karne ko nahi."
+            exit 0
+          fi
+          git commit -m "bot state $(date -u +%Y-%m-%dT%H:%M:%SZ)"
+          # push kabhi-kabhi network/rebase conflict se fail hota hai -> retry
+          for i in 1 2 3 4 5; do
+            if git pull --rebase --autostash && git push; then
+              echo "state pushed (attempt $i)"
+              exit 0
+            fi
+            echo "push attempt $i fail — 10s baad retry"
+            sleep 10
+          done
+          echo "::error::state push 5 attempts ke baad bhi fail"
+          exit 1
