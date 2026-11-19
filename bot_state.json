@@ -4,17 +4,17 @@
     "side": "SHORT",
     "entry_px": 3749.287055,
     "qty": 66,
-    "sl": 3785.724,
+    "sl": 3761.114,
     "atr_entry": 32.45194142300345,
-    "best": 3720.82,
+    "best": 3696.21,
     "entry_fee": 0.024745294563,
     "time": "2026-11-18 16:05 UTC"
   },
   "pending": 0,
-  "last_bar": 1795032000,
+  "last_bar": 1795046400,
   "trades": 0,
-  "last_run": "2026-11-19 03:05 UTC",
-  "last_price": 3709.94,
+  "last_run": "2026-11-19 04:05 UTC",
+  "last_price": 3725.664,
   "mode": "PAPER",
   "last_heartbeat": "2026-11-19"
 }
