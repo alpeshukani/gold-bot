@@ -1,2 +1,3 @@
 time,event,side,entry_px,exit_px,qty,reason,pnl,equity_after
 2026-11-18 16:05 UTC,ENTRY,SHORT,3749.287,,66,BREAKOUT,,100.0
+2026-11-20 11:06 UTC,EXIT,SHORT,3749.287055,3588.306,66,TRAIL,10.5763,110.58
