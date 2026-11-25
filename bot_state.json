@@ -1,11 +1,20 @@
 {
   "equity": 110.57629620428608,
-  "pos": null,
+  "pos": {
+    "side": "SHORT",
+    "entry_px": 3514.84389689,
+    "qty": 78,
+    "sl": 3588.388,
+    "atr_entry": 36.77221215989966,
+    "best": 3514.844,
+    "entry_fee": 0.027415782395742005,
+    "time": "2026-11-25 08:06 UTC"
+  },
   "pending": 0,
-  "last_bar": 1795564800,
+  "last_bar": 1795579200,
   "trades": 1,
-  "last_run": "2026-11-25 07:06 UTC",
-  "last_price": 3517.748,
+  "last_run": "2026-11-25 08:06 UTC",
+  "last_price": 3514.844,
   "mode": "PAPER",
   "last_heartbeat": "2026-11-25"
 }
