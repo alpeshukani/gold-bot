@@ -11,10 +11,10 @@
     "time": "2026-11-25 08:06 UTC"
   },
   "pending": 0,
-  "last_bar": 1795579200,
+  "last_bar": 1795593600,
   "trades": 1,
-  "last_run": "2026-11-25 11:05 UTC",
-  "last_price": 3523.775,
+  "last_run": "2026-11-25 12:05 UTC",
+  "last_price": 3496.359,
   "mode": "PAPER",
   "last_heartbeat": "2026-11-25"
 }
